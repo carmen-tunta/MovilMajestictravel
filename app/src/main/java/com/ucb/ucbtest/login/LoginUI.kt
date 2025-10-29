@@ -46,10 +46,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ucb.ucbtest.R
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.ucb.domain.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginUI(onSuccess: () -> Unit) {
+fun LoginUI(onSuccess: (User) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -156,6 +157,7 @@ fun LoginUI(onSuccess: () -> Unit) {
                     is LoginViewModel.LoginState.Loading -> {
                         userData = "Cargando..."
                     }
+
                     is LoginViewModel.LoginState.Error -> {
                         val msg = (loginState as LoginViewModel.LoginState.Error).message
                         userData = "Error: $msg"
@@ -163,6 +165,7 @@ fun LoginUI(onSuccess: () -> Unit) {
                     is LoginViewModel.LoginState.Successful -> {
                         val user = (loginState as LoginViewModel.LoginState.Successful).user
                         userData = "Bienvenido ${user.username}\nEmail: ${user.accessToken}"
+                        onSuccess(user)
                     }
                 }
 
