@@ -73,6 +73,9 @@ dependencies {
 
     implementation(libs.firebase.messaging)
 
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
+
+
     implementation(project(":usecases"))
     implementation(project(":domain"))
     implementation(project(":data"))

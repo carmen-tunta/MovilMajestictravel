@@ -3,9 +3,12 @@ package com.ucb.ucbtest.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ucb.data.LoginRepository
+import com.ucb.data.NetworkResult
+import com.ucb.domain.User
 import com.ucb.framework.datastore.LoginDataSource
 import com.ucb.usecases.DoLogin
 import com.ucb.usecases.ObtainToken
+import com.ucb.usecases.user.Login
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,14 +17,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    val loginUseCase: DoLogin,
-    val obtainToken: ObtainToken
+    val userLogin: Login,
+    // val obtainToken: ObtainToken
 ): ViewModel() {
 
     sealed class LoginState {
         object Init: LoginState()
         object Loading: LoginState()
-        class Successful: LoginState()
+        data class Successful(val user: User): LoginState()
         class Error(val message: String): LoginState()
     }
 
@@ -29,20 +32,22 @@ class LoginViewModel @Inject constructor(
     var loginState : StateFlow<LoginState> = _loginState
 
 
-    fun doLogin(userName: String, password: String) {
+    fun DoLogin(username: String, password: String) {
+        println(username)
+        println(password)
         _loginState.value = LoginState.Loading
         viewModelScope.launch {
-            val result: Result<Unit> = loginUseCase.invoke(userName = userName, password = password)
+            val result: NetworkResult<User> = userLogin.invoke(username, password)
 
-            when {
-                result.isSuccess -> {
-                    _loginState.value = LoginState.Successful()
-                    obtainToken.getToken()
+            when (result) {
+                is NetworkResult.Success -> {
+                    _loginState.value = LoginState.Successful(result.data)
                 }
-                result.isFailure -> {
-                    _loginState.value = LoginState.Error(message = "Invalid credentials")
+                is NetworkResult.Error -> {
+                    _loginState.value = LoginState.Error("Error al hacer el login")
                 }
             }
         }
     }
+
 }

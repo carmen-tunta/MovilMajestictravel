@@ -2,8 +2,10 @@ package com.ucb.framework.mappers
 
 import com.ucb.domain.Gitalias
 import com.ucb.domain.Movie
+import com.ucb.domain.User
 import com.ucb.framework.dto.AvatarResponseDto
 import com.ucb.framework.dto.MovieDto
+import com.ucb.framework.dto.user.UserResponseDto
 import com.ucb.framework.persistence.GitAccount
 
 fun AvatarResponseDto.toModel(): Gitalias {
@@ -24,10 +26,19 @@ fun GitAccount.toModel(): Gitalias {
     )
 }
 
+fun UserResponseDto.toModel(): User {
+    return User(
+        username = user.username,
+        accessToken = access_token,
+        id = user.id,
+    )
+}
+
 fun MovieDto.toModel(): Movie {
     return Movie(
         title = title,
         overview = overview,
-        posterPath = posterPath
+        posterPath = posterPath,
+        id = "1"
     )
 }

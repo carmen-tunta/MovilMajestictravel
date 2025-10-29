@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ucbtest</string>
-    <string name="login_title">Signin</string>
+    <string name="login_title">Request Tray</string>
     <string name="home_welcome_text">Welcome back %s!</string>
     <string name="gitalias_input">Enter the GitHub account</string>
     <string name="gitalias_btn_find">Find</string>

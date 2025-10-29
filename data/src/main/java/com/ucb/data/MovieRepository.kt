@@ -6,7 +6,6 @@ import com.ucb.domain.Movie
 class MovieRepository(
     val remoteDataSource: IMovieRemoteDataSource
 ) {
-
     suspend fun getPopularMovies(token: String): NetworkResult<List<Movie>> {
         return this.remoteDataSource.fetchPopularMovies(token)
     }
