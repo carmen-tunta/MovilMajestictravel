@@ -164,7 +164,6 @@ fun LoginUI(onSuccess: (User) -> Unit) {
                     }
                     is LoginViewModel.LoginState.Successful -> {
                         val user = (loginState as LoginViewModel.LoginState.Successful).user
-                        userData = "Bienvenido ${user.username}\nEmail: ${user.accessToken}"
                         onSuccess(user)
                     }
                 }

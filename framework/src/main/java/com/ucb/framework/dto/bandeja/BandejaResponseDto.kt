@@ -1,0 +1,22 @@
+package com.ucb.framework.dto.bandeja
+
+import com.ucb.domain.Service
+
+data class ServiceDto(
+    val name: String,
+)
+
+data class ServiceResponseDto(
+    val id: Int,
+    val service: ServiceDto,
+)
+
+data class BandejaResponseDto(
+    val id: Int,
+    val passengerName: String,
+    val countryCode: String,
+    val whatsapp: String,
+    val services: List<ServiceResponseDto>,
+    val travelDate: String?,
+    val createdAt: String,
+)

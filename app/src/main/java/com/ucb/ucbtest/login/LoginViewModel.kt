@@ -33,8 +33,6 @@ class LoginViewModel @Inject constructor(
 
 
     fun DoLogin(username: String, password: String) {
-        println(username)
-        println(password)
         _loginState.value = LoginState.Loading
         viewModelScope.launch {
             val result: NetworkResult<User> = userLogin.invoke(username, password)
