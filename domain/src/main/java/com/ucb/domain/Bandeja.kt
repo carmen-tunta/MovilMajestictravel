@@ -11,4 +11,5 @@ data class Bandeja(
     val services: List<Service>,
     val travelDate: String?,
     val createdAt: String,
+    val status: String,
 )

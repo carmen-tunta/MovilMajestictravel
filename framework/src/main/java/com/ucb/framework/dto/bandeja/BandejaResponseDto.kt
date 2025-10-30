@@ -3,6 +3,7 @@ package com.ucb.framework.dto.bandeja
 import com.ucb.domain.Service
 
 data class ServiceDto(
+    val id: Int,
     val name: String,
 )
 
@@ -19,4 +20,5 @@ data class BandejaResponseDto(
     val services: List<ServiceResponseDto>,
     val travelDate: String?,
     val createdAt: String,
+    val status: String,
 )

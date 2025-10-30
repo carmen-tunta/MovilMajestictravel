@@ -41,7 +41,7 @@ fun UserResponseDto.toModel(): User {
 
 fun ServiceResponseDto.toModel(): Service {
     return Service(
-        id = id,
+        id = service.id,
         serviceName = service.name,
     )
 }
@@ -55,6 +55,7 @@ fun BandejaResponseDto.toModel(): Bandeja {
         services = services.map { it.toModel() },
         travelDate = travelDate,
         createdAt = createdAt,
+        status = status,
     )
 }
 
