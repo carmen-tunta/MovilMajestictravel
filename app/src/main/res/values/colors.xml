@@ -10,4 +10,5 @@
     <color name="primary">#051c2c</color>
     <color name="text_color">#000000</color>
     <color name="text_color_secondary">#6b7280</color>
+    <color name="border_table_color">#E0E0E0</color>
 </resources>

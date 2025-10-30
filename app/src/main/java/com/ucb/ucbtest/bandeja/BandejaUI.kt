@@ -2,13 +2,17 @@ package com.ucb.ucbtest.bandeja
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +34,15 @@ import com.ucb.domain.User
 import com.ucb.ucbtest.R
 import com.ucb.ucbtest.login.LoginViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.zIndex
 
 
 @Composable
@@ -45,7 +58,7 @@ fun BandejaUI(user: User) {
 
     Scaffold { innerPadding ->
         Box(
-            modifier = Modifier
+                modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
@@ -56,11 +69,13 @@ fun BandejaUI(user: User) {
                     .align(Alignment.TopStart)
                     .padding(horizontal = 15.dp, vertical = 25.dp)
                     .width(160.dp)
+                    .zIndex(1f)
             )
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
                     .padding(vertical = 70.dp, horizontal = 20.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
@@ -103,9 +118,124 @@ fun BandejaUI(user: User) {
                     }
                     is BandejaViewModel.BandejaState.Successful -> {
                         val bandejas = (bandejaState as BandejaViewModel.BandejaState.Successful).bandejas
-                        Text(
-                            bandejas.toString()
-                        )
+                        bandejas.map {
+                            Text("")
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .border(
+                                        width = 1.dp,
+                                        color = colorResource(id = R.color.border_table_color),
+                                        shape = RoundedCornerShape(12.dp))
+                                    .padding(
+                                        vertical = 8.dp,
+                                        horizontal = 5.dp,
+                                    ),
+                            ) {
+                                val borderColor = colorResource(id = R.color.border_table_color)
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .drawBehind {
+                                            val strokeWidth = 1.dp.toPx()
+                                            val y = size.height - strokeWidth / 2
+                                            drawLine(
+                                                color = borderColor,
+                                                start = Offset(0f, y),
+                                                end = Offset(size.width, y),
+                                                strokeWidth = strokeWidth)
+                                        }
+                                        .padding(
+                                            vertical = 8.dp,
+                                            horizontal = 11.dp,
+                                        ),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = it.passengerName,
+                                        style = TextStyle(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                    )
+                                    Text(it.countryCode + " " + it.whatsapp)
+                                }
+
+                                it.services.map {
+                                    Text(
+                                        text = it.serviceName,
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                    )
+                                }
+
+                                Text("")
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            horizontal = 5.dp,
+                                            vertical = 3.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Text(
+                                        "Fecha probable de viaje",
+                                        modifier = Modifier
+                                            .weight(0.38f)
+                                            .padding(horizontal = 8.dp),
+                                        style = TextStyle(
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    )
+                                    Text(
+                                        "Fecha solicitada",
+                                        modifier = Modifier
+                                            .weight(0.38f)
+                                            .padding(horizontal = 8.dp),
+                                        style = TextStyle(
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    )
+                                    Text(
+                                        "Vence en",
+                                        modifier = Modifier
+                                            .weight(0.24f)
+                                            .padding(horizontal = 8.dp),
+                                        style = TextStyle(
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    )
+                                }
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = if (it.travelDate != null) {
+                                            it.travelDate.toString()
+                                        } else {
+                                            "Sin fecha"
+                                        },
+                                        modifier = Modifier
+                                            .weight(0.38f)
+                                            .padding(10.dp),
+                                    )
+
+                                    Text(
+                                        it.createdAt,
+                                        modifier = Modifier
+                                            .weight(0.38f)
+                                            .padding(10.dp),
+                                    )
+                                    Text(
+                                        "Lol o sea omg",
+                                        modifier = Modifier
+                                            .weight(0.24f)
+                                            .padding(10.dp),
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
