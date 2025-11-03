@@ -55,6 +55,7 @@ fun BandejaResponseDto.toModel(): Bandeja {
         services = services.map { it.toModel() },
         travelDate = travelDate,
         createdAt = createdAt,
+        assignedAt = assignedAt,
         status = status,
     )
 }

@@ -32,10 +32,7 @@ class BandejaRemoteDataSource(
 
     override suspend fun takeRequest(id: String, agentId: String, token: String): NetworkResult<Bandeja> {
         return try {
-            println("LLEGA ACA" + id + agentId)
-
             val response = retrofit.mtgApiService.takeRequest(id, TakeRequestBody(agentId), token)
-            println("ESTA ES LA RESPUESTA" + response)
             if(response.isSuccessful) {
                 val body = response.body()
                 if(body != null) {

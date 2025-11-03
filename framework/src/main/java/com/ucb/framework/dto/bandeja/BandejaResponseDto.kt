@@ -20,5 +20,6 @@ data class BandejaResponseDto(
     val services: List<ServiceResponseDto>,
     val travelDate: String?,
     val createdAt: String,
+    val assignedAt: String,
     val status: String,
 )

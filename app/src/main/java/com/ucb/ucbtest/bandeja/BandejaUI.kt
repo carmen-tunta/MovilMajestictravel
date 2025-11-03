@@ -1,7 +1,6 @@
 package com.ucb.ucbtest.bandeja
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +48,66 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.zIndex
+import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
+
+fun String.toFormattedDate(): String {
+    return try {
+        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+        isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        val date = isoFormat.parse(this)
+        val outputFormat = SimpleDateFormat("EEE d MMM yy HH:mm", Locale("es", "ES"))
+        outputFormat.format(date!!)
+            .replaceFirstChar { it.uppercase() }
+    } catch (e: Exception) {
+        this
+    }
+}
+
+fun String.timeRemaining(): String {
+    return try {
+        // Formato del timestamp recibido
+        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+        isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        val assignedDate = isoFormat.parse(this)
+        val now = Date()
+
+        val diffMillis = now.time - assignedDate.time
+
+        // Tiempo máximo de validez (45 minutos)
+        val maxMillis = TimeUnit.MINUTES.toMillis(45)
+
+        val remainingMillis = maxMillis - diffMillis
+
+        if (remainingMillis <= 0) {
+            "Expirado"
+        } else {
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(remainingMillis) - 239
+            String.format("$minutes min.")
+        }
+    } catch (e: Exception) {
+        "Desconocido"
+    }
+}
+
+fun formatTravelDate(dateString: String?): String {
+    if (dateString.isNullOrBlank()) return "Sin fecha"
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+
+        // Formato de salida: "Lun 21 oct 25"
+        val outputFormat = SimpleDateFormat("EEE dd MMM yy", Locale("es", "ES"))
+        outputFormat.format(date!!)
+            .replaceFirstChar { it.uppercase() }
+    } catch (e: Exception) {
+        "Sin fecha"
+    }
+}
 
 
 @Composable
@@ -235,7 +294,7 @@ fun BandejaUI(user: User) {
                                 ) {
                                     Text(
                                         text = if (it.travelDate != null) {
-                                            it.travelDate.toString()
+                                            formatTravelDate(it.travelDate)
                                         } else {
                                             "Sin fecha"
                                         },
@@ -245,7 +304,7 @@ fun BandejaUI(user: User) {
                                     )
 
                                     Text(
-                                        it.createdAt,
+                                        it.createdAt.toFormattedDate(),
                                         modifier = Modifier
                                             .weight(0.38f)
                                             .padding(10.dp),
@@ -262,9 +321,16 @@ fun BandejaUI(user: User) {
                                                 textDecoration = TextDecoration.Underline
                                             )
                                         )
+                                    } else if (it.status == "en_progreso") {
+                                        Text(
+                                            text = "En progreso",
+                                            modifier = Modifier
+                                                .weight(0.24f)
+                                                .padding(10.dp),
+                                        )
                                     } else {
                                         Text(
-                                            text = it.status,
+                                            text = it.assignedAt.timeRemaining(),
                                             modifier = Modifier
                                                 .weight(0.24f)
                                                 .padding(10.dp),
