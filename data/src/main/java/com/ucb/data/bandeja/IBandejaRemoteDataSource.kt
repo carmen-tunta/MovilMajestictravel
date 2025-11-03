@@ -9,4 +9,9 @@ interface IBandejaRemoteDataSource {
         token: String,
     ): NetworkResult<List<Bandeja>>
 
+    suspend fun takeRequest(
+        id: String,
+        agentId: String,
+        token: String,
+    ): NetworkResult<Bandeja>
 }

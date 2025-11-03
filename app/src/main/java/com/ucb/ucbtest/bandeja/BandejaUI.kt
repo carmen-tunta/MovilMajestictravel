@@ -255,7 +255,8 @@ fun BandejaUI(user: User) {
                                             "TOMAR",
                                             modifier = Modifier
                                                 .weight(0.24f)
-                                                .padding(10.dp),
+                                                .padding(10.dp)
+                                                .clickable { viewModel.DoTakeRequest(it.id.toString(), user.id.toString(), user.accessToken) },
                                             style = TextStyle(
                                                 fontWeight = FontWeight.Bold,
                                                 textDecoration = TextDecoration.Underline

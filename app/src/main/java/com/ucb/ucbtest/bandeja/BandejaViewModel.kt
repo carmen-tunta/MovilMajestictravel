@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ucb.data.NetworkResult
 import com.ucb.domain.Bandeja
 import com.ucb.usecases.bandeja.GetBandejaByAgent
+import com.ucb.usecases.bandeja.TakeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BandejaViewModel @Inject constructor(
-    val getByAgent: GetBandejaByAgent
+    val getByAgent: GetBandejaByAgent,
+    val takeRequest: TakeRequest
 ): ViewModel() {
 
     sealed class BandejaState {
@@ -39,6 +41,22 @@ class BandejaViewModel @Inject constructor(
                 }
                 is NetworkResult.Error -> {
                     _bandejaState.value = BandejaState.Error("No se encontraron datos")
+                }
+            }
+        }
+    }
+
+    fun DoTakeRequest(id: String, idAgent: String, token: String) {
+        _bandejaState.value = BandejaState.Loading
+        viewModelScope.launch {
+            val result: NetworkResult<Bandeja> = takeRequest.invoke(id, idAgent, "Bearer $token")
+
+            when(result) {
+                is NetworkResult.Success -> {
+                    DoGetByAgent(idAgent, token)
+                }
+                is NetworkResult.Error -> {
+                    _bandejaState.value = BandejaState.Error("Error al tomar la solicitud, recarga la página")
                 }
             }
         }

@@ -10,4 +10,10 @@ class BandejaRepository(
         agentId: String,
         token: String,
     ) : NetworkResult<List<Bandeja>> = this.remoteDS.getByAgent(agentId, token)
+
+    suspend fun takeRequest(
+        id: String,
+        agentId: String,
+        token: String,
+    ) : NetworkResult<Bandeja> = this.remoteDS.takeRequest(id, agentId, token)
 }

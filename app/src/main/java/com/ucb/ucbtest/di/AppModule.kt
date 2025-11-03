@@ -36,6 +36,7 @@ import com.ucb.framework.user.UserRemoteDataSource
 import com.ucb.usecases.GetEmailKey
 import com.ucb.usecases.ObtainToken
 import com.ucb.usecases.bandeja.GetBandejaByAgent
+import com.ucb.usecases.bandeja.TakeRequest
 import com.ucb.usecases.user.Login
 
 @Module
@@ -97,7 +98,13 @@ object AppModule {
         return GetBandejaByAgent(bandejaRepo)
     }
 
-            @Provides
+    @Provides
+    @Singleton
+    fun provideTakeRequest(bandejaRepo: BandejaRepository): TakeRequest {
+        return TakeRequest(bandejaRepo)
+    }
+
+    @Provides
     @Singleton
     fun gitRepository(remoteDataSource: IGitRemoteDataSource, localDataSource: ILocalDataSource): GithubRepository {
         return GithubRepository(remoteDataSource, localDataSource)
