@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,6 +54,148 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+fun getCountryNameByCode(code: String): String {
+    val map = mapOf(
+        "+1" to "Estados Unidos",
+        "+7" to "Rusia",
+        "+20" to "Egipto",
+        "+27" to "Sudáfrica",
+        "+30" to "Grecia",
+        "+31" to "Países Bajos",
+        "+32" to "Bélgica",
+        "+33" to "Francia",
+        "+34" to "España",
+        "+36" to "Hungría",
+        "+39" to "Italia",
+        "+40" to "Rumania",
+        "+41" to "Suiza",
+        "+43" to "Austria",
+        "+44" to "Reino Unido",
+        "+45" to "Dinamarca",
+        "+46" to "Suecia",
+        "+47" to "Noruega",
+        "+48" to "Polonia",
+        "+49" to "Alemania",
+        "+51" to "Perú",
+        "+52" to "México",
+        "+53" to "Cuba",
+        "+54" to "Argentina",
+        "+55" to "Brasil",
+        "+56" to "Chile",
+        "+57" to "Colombia",
+        "+58" to "Venezuela",
+        "+60" to "Malasia",
+        "+61" to "Australia",
+        "+62" to "Indonesia",
+        "+63" to "Filipinas",
+        "+64" to "Nueva Zelanda",
+        "+65" to "Singapur",
+        "+66" to "Tailandia",
+        "+81" to "Japón",
+        "+82" to "Corea del Sur",
+        "+84" to "Vietnam",
+        "+86" to "China",
+        "+90" to "Turquía",
+        "+91" to "India",
+        "+92" to "Pakistán",
+        "+93" to "Afganistán",
+        "+94" to "Sri Lanka",
+        "+95" to "Myanmar",
+        "+98" to "Irán",
+        "+211" to "Sudán del Sur",
+        "+212" to "Marruecos",
+        "+213" to "Argelia",
+        "+216" to "Túnez",
+        "+218" to "Libia",
+        "+220" to "Gambia",
+        "+221" to "Senegal",
+        "+222" to "Mauritania",
+        "+223" to "Malí",
+        "+224" to "Guinea",
+        "+225" to "Costa de Marfil",
+        "+226" to "Burkina Faso",
+        "+228" to "Togo",
+        "+229" to "Benín",
+        "+230" to "Mauricio",
+        "+231" to "Liberia",
+        "+232" to "Sierra Leona",
+        "+233" to "Ghana",
+        "+234" to "Nigeria",
+        "+235" to "Chad",
+        "+236" to "República Centroafricana",
+        "+237" to "Camerún",
+        "+238" to "Cabo Verde",
+        "+239" to "Santo Tomé y Príncipe",
+        "+240" to "Guinea Ecuatorial",
+        "+241" to "Gabón",
+        "+242" to "Congo",
+        "+243" to "República Democrática del Congo",
+        "+244" to "Angola",
+        "+245" to "Guinea-Bisáu",
+        "+246" to "Territorio Británico del Océano Índico",
+        "+247" to "Santa Helena",
+        "+248" to "Seychelles",
+        "+249" to "Sudán",
+        "+250" to "Ruanda",
+        "+251" to "Etiopía",
+        "+252" to "Somalia",
+        "+253" to "Yibuti",
+        "+254" to "Kenia",
+        "+255" to "Tanzania",
+        "+256" to "Uganda",
+        "+257" to "Burundi",
+        "+258" to "Mozambique",
+        "+260" to "Zambia",
+        "+261" to "Madagascar",
+        "+262" to "Reunión / Mayotte",
+        "+263" to "Zimbabue",
+        "+264" to "Namibia",
+        "+265" to "Malaui",
+        "+266" to "Lesoto",
+        "+267" to "Botsuana",
+        "+268" to "Esuatini",
+        "+269" to "Comoras",
+        "+290" to "Santa Elena",
+        "+291" to "Eritrea",
+        "+297" to "Aruba",
+        "+298" to "Islas Feroe",
+        "+299" to "Groenlandia",
+        "+350" to "Gibraltar",
+        "+351" to "Portugal",
+        "+352" to "Luxemburgo",
+        "+353" to "Irlanda",
+        "+354" to "Islandia",
+        "+355" to "Albania",
+        "+356" to "Malta",
+        "+357" to "Chipre",
+        "+358" to "Finlandia",
+        "+359" to "Bulgaria",
+        "+370" to "Lituania",
+        "+371" to "Letonia",
+        "+372" to "Estonia",
+        "+373" to "Moldavia",
+        "+374" to "Armenia",
+        "+375" to "Bielorrusia",
+        "+376" to "Andorra",
+        "+377" to "Mónaco",
+        "+378" to "San Marino",
+        "+380" to "Ucrania",
+        "+381" to "Serbia",
+        "+382" to "Montenegro",
+        "+383" to "Kosovo",
+        "+385" to "Croacia",
+        "+386" to "Eslovenia",
+        "+387" to "Bosnia y Herzegovina",
+        "+389" to "Macedonia del Norte",
+        "+420" to "República Checa",
+        "+421" to "Eslovaquia",
+        "+423" to "Liechtenstein",
+        "+591" to "Bolivia",
+        "+593" to "Ecuador",
+    )
+    return map[code] ?: ""
+}
+
 fun String.toFormattedDate(): String {
     return try {
         val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
@@ -69,7 +212,6 @@ fun String.toFormattedDate(): String {
 
 fun String.timeRemaining(): String {
     return try {
-        // Formato del timestamp recibido
         val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
         isoFormat.timeZone = TimeZone.getTimeZone("UTC")
 
@@ -78,7 +220,6 @@ fun String.timeRemaining(): String {
 
         val diffMillis = now.time - assignedDate.time
 
-        // Tiempo máximo de validez (45 minutos)
         val maxMillis = TimeUnit.MINUTES.toMillis(45)
 
         val remainingMillis = maxMillis - diffMillis
@@ -100,7 +241,6 @@ fun formatTravelDate(dateString: String?): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val date = inputFormat.parse(dateString)
 
-        // Formato de salida: "Lun 21 oct 25"
         val outputFormat = SimpleDateFormat("EEE dd MMM yy", Locale("es", "ES"))
         outputFormat.format(date!!)
             .replaceFirstChar { it.uppercase() }
@@ -115,8 +255,6 @@ fun BandejaUI(user: User) {
     val viewModel: BandejaViewModel = hiltViewModel()
 
     val bandejaState by viewModel.bandejaState.collectAsState(BandejaViewModel.BandejaState.Init)
-
-    // Lanza la carga inicial al ingresar a la pantalla
     LaunchedEffect(user.id) {
         viewModel.DoGetByAgent(user.id.toString(), user.accessToken)
     }
@@ -127,24 +265,21 @@ fun BandejaUI(user: User) {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "PeruAndesTravel Logo",
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(horizontal = 15.dp, vertical = 25.dp)
-                    .width(160.dp)
-                    .zIndex(1f)
-            )
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(vertical = 70.dp, horizontal = 20.dp),
+                    .padding(vertical = 15.dp, horizontal = 20.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "PeruAndesTravel Logo",
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .width(160.dp)
+                )
                 Text(
                     text = user.username,
                     modifier = Modifier.padding(bottom = 7.dp),
@@ -236,8 +371,11 @@ fun BandejaUI(user: User) {
                                         ),
                                     )
                                     Text(
-                                        text = it.countryCode + " " + it.whatsapp,
+                                        text = "${getCountryNameByCode(it.countryCode)} " + it.countryCode + " " + it.whatsapp,
                                         color = colorResource(id = R.color.text_color_secondary),
+                                        style = TextStyle(
+                                            fontSize = 10.sp
+                                        )
                                         )
                                 }
 
