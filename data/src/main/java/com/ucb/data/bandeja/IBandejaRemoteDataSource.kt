@@ -8,4 +8,5 @@ interface IBandejaRemoteDataSource {
         agentId: String,
         token: String,
     ): NetworkResult<List<Bandeja>>
+
 }

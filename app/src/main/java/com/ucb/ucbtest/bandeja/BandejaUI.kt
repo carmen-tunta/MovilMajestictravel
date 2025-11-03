@@ -3,6 +3,7 @@ package com.ucb.ucbtest.bandeja
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,11 +38,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.zIndex
 
 
@@ -96,14 +102,25 @@ fun BandejaUI(user: User) {
                         color = colorResource(id = R.color.text_color_secondary)
                     )
                 )
-                Text(
-                    text = "Bandeja de Reservas",
-                    modifier = Modifier.padding(bottom = 22.dp),
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        color = colorResource(id = R.color.text_color)
+                Row {
+                    Text(
+                        text = "Bandeja de Reservas",
+                        modifier = Modifier.padding(bottom = 22.dp),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            color = colorResource(id = R.color.text_color)
+                        )
                     )
-                )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Recargar",
+                        tint = colorResource(id = R.color.text_color_secondary),
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { viewModel.DoGetByAgent(user.id.toString(), user.accessToken) }
+                    )
+                }
 
                 when (bandejaState) {
                     is BandejaViewModel.BandejaState.Init -> {
@@ -118,7 +135,9 @@ fun BandejaUI(user: User) {
                     }
                     is BandejaViewModel.BandejaState.Successful -> {
                         val bandejas = (bandejaState as BandejaViewModel.BandejaState.Successful).bandejas
-                        bandejas.map {
+                        val (liberadas, recibidos) = bandejas.partition { it.status.equals("liberado", ignoreCase = true) }
+
+                        (recibidos + liberadas).map {
                             Text("")
                             Column(
                                 modifier = Modifier
@@ -157,12 +176,16 @@ fun BandejaUI(user: User) {
                                             fontWeight = FontWeight.Bold
                                         ),
                                     )
-                                    Text(it.countryCode + " " + it.whatsapp)
+                                    Text(
+                                        text = it.countryCode + " " + it.whatsapp,
+                                        color = colorResource(id = R.color.text_color_secondary),
+                                        )
                                 }
 
                                 it.services.map {
                                     Text(
                                         text = it.serviceName,
+                                        color = colorResource(id = R.color.text_color_secondary),
                                         modifier = Modifier
                                             .padding(8.dp)
                                     )
@@ -227,12 +250,27 @@ fun BandejaUI(user: User) {
                                             .weight(0.38f)
                                             .padding(10.dp),
                                     )
-                                    Text(
-                                        "Lol o sea omg",
-                                        modifier = Modifier
-                                            .weight(0.24f)
-                                            .padding(10.dp),
-                                    )
+                                    if (it.status == "liberado") {
+                                        Text(
+                                            "TOMAR",
+                                            modifier = Modifier
+                                                .weight(0.24f)
+                                                .padding(10.dp),
+                                            style = TextStyle(
+                                                fontWeight = FontWeight.Bold,
+                                                textDecoration = TextDecoration.Underline
+                                            )
+                                        )
+                                    } else {
+                                        Text(
+                                            text = it.status,
+                                            modifier = Modifier
+                                                .weight(0.24f)
+                                                .padding(10.dp),
+                                        )
+                                    }
+
+
                                 }
                             }
                         }
