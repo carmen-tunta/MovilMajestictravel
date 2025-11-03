@@ -1,39 +1,39 @@
 package com.ucb.framework.datastore
-
 import android.content.Context
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.ucb.data.datastore.ILoginDataStore
-import kotlinx.coroutines.flow.first
+import com.ucb.domain.User
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import com.google.gson.Gson
 
 
-val Context.dataStore by preferencesDataStore(
-    name = "user_preferences"
-)
+val Context.dataStore by preferencesDataStore(name = "login_prefs")
 
-class LoginDataSource(
-    private val context: Context
-) : ILoginDataStore {
-    companion object {
-        val EMAIL_KEY = stringPreferencesKey("email_key")
-    }
+class LoginDataSource(private val context: Context) {
 
-    override suspend fun saveEmail(email: String) {
-        context.dataStore.edit {
-            preferences -> preferences[EMAIL_KEY] = email
+    private val USER = stringPreferencesKey("user")
+
+    val gson = Gson()
+
+    suspend fun saveUser(user: User) {
+        val userJson = gson.toJson(user)
+        context.dataStore.edit { preferences ->
+            preferences[USER] = userJson
         }
     }
 
-    override suspend fun getEmail(): Result<String> {
-        val preferences = context.dataStore.data.first()
-        val email = preferences[EMAIL_KEY]
-        return if (email != null) {
-            Result.success(email)
-        } else {
-            Result.failure(EmailNotFoundError())
+    val userFlow: Flow<User?> = context.dataStore.data
+        .map { preferences ->
+            preferences[USER]?.let { gson.fromJson(it, User::class.java) }
         }
+
+    suspend fun clearToken() {
+        context.dataStore.edit { it.clear() }
     }
 }
 
-class EmailNotFoundError: Throwable("Email not found")
+
+

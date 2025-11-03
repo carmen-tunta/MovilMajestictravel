@@ -58,6 +58,7 @@ dependencies {
 
     implementation(libs.datastore)
 
+    implementation("com.google.code.gson:gson:2.10.1")
 
     debugImplementation(libs.chucker)
     releaseImplementation(libs.chucker.no.op)

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ucb.data.NetworkResult
 import com.ucb.domain.Bandeja
+import com.ucb.framework.datastore.LoginDataSource
 import com.ucb.usecases.bandeja.GetBandejaByAgent
 import com.ucb.usecases.bandeja.TakeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,8 +18,11 @@ import javax.inject.Inject
 @HiltViewModel
 class BandejaViewModel @Inject constructor(
     val getByAgent: GetBandejaByAgent,
-    val takeRequest: TakeRequest
+    val takeRequest: TakeRequest,
+    private val loginDataSource: LoginDataSource,
 ): ViewModel() {
+
+    val currentUser = loginDataSource.userFlow
 
     sealed class BandejaState {
         object Init: BandejaState()

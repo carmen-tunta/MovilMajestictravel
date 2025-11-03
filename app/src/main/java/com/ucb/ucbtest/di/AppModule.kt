@@ -3,24 +3,22 @@ package com.ucb.ucbtest.di
 import android.content.Context
 import com.ucb.data.BandejaRepository
 import com.ucb.data.GithubRepository
-import com.ucb.data.LoginRepository
 import com.ucb.data.MovieRepository
 import com.ucb.data.PushNotificationRepository
 import com.ucb.data.UserRepository
 import com.ucb.data.bandeja.IBandejaRemoteDataSource
-import com.ucb.data.datastore.ILoginDataStore
 import com.ucb.data.git.IGitRemoteDataSource
 import com.ucb.data.git.ILocalDataSource
 import com.ucb.data.movie.IMovieRemoteDataSource
 import com.ucb.data.push.IPushDataSource
 import com.ucb.data.user.IUserRemoteDataSource
 import com.ucb.framework.bandeja.BandejaRemoteDataSource
+import com.ucb.framework.datastore.LoginDataSource
 import com.ucb.framework.github.GithubLocalDataSource
 import com.ucb.framework.github.GithubRemoteDataSource
 import com.ucb.framework.movie.MovieRemoteDataSource
 import com.ucb.framework.service.RetrofitBuilder
 import com.ucb.ucbtest.R
-import com.ucb.usecases.DoLogin
 import com.ucb.usecases.FindGitAlias
 import com.ucb.usecases.GetPopularMovies
 import com.ucb.usecases.SaveGitalias
@@ -30,10 +28,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import com.ucb.framework.datastore.LoginDataSource
 import com.ucb.framework.push.FirebaseNotificationDataSource
 import com.ucb.framework.user.UserRemoteDataSource
-import com.ucb.usecases.GetEmailKey
 import com.ucb.usecases.ObtainToken
 import com.ucb.usecases.bandeja.GetBandejaByAgent
 import com.ucb.usecases.bandeja.TakeRequest
@@ -143,26 +139,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDoLogin(loginRepository: LoginRepository): DoLogin {
-        return DoLogin(loginRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLoginRepository( loginDataSource: ILoginDataStore): LoginRepository {
-        return LoginRepository(loginDataSource)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLoginDataSource( @ApplicationContext context: Context ): ILoginDataStore {
+    fun provideLoginDataSource( @ApplicationContext context: Context ): LoginDataSource {
         return LoginDataSource(context = context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGetEmailKey(loginRepository: LoginRepository): GetEmailKey {
-        return GetEmailKey(loginRepository)
     }
 
     @Provides

@@ -2,11 +2,9 @@ package com.ucb.ucbtest.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ucb.data.LoginRepository
 import com.ucb.data.NetworkResult
 import com.ucb.domain.User
 import com.ucb.framework.datastore.LoginDataSource
-import com.ucb.usecases.DoLogin
 import com.ucb.usecases.ObtainToken
 import com.ucb.usecases.user.Login
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     val userLogin: Login,
-    // val obtainToken: ObtainToken
+    val loginDataSource: LoginDataSource,
 ): ViewModel() {
 
     sealed class LoginState {
@@ -31,7 +29,11 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Init)
     var loginState : StateFlow<LoginState> = _loginState
 
-
+    fun saveUserLocally(user: User) {
+        viewModelScope.launch {
+            loginDataSource.saveUser(user)
+        }
+    }
     fun DoLogin(username: String, password: String) {
         _loginState.value = LoginState.Loading
         viewModelScope.launch {
@@ -39,6 +41,7 @@ class LoginViewModel @Inject constructor(
 
             when (result) {
                 is NetworkResult.Success -> {
+                    loginDataSource.saveUser(result.data)
                     _loginState.value = LoginState.Successful(result.data)
                 }
                 is NetworkResult.Error -> {

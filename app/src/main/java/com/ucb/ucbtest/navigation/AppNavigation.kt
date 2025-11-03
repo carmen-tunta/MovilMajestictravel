@@ -3,62 +3,56 @@ package com.ucb.ucbtest.navigation
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.ucb.domain.Movie
 import com.ucb.domain.User
+import com.ucb.framework.datastore.LoginDataSource
 import com.ucb.ucbtest.bandeja.BandejaUI
-import com.ucb.ucbtest.counter.CounterUI
-import com.ucb.ucbtest.gitalias.GitaliasUI
 import com.ucb.ucbtest.login.LoginUI
-import com.ucb.ucbtest.movie.MoviesUI
-import com.ucb.ucbtest.moviedetail.MovieDetailUI
-import com.ucb.ucbtest.takephoto.TakePhotoUI
+import androidx.compose.runtime.getValue
+import com.ucb.ucbtest.bandeja.BandejaScreen
+import com.ucb.ucbtest.login.LoginScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
 import java.net.URLEncoder
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(loginDataSource: LoginDataSource) {
     val navController = rememberNavController()
+    val currentUser by loginDataSource.userFlow.collectAsState(initial = null)
+
+    val startDestination = if (currentUser != null) {
+        Screen.BandejaScreen.route
+    } else {
+        Screen.LoginScreen.route
+    }
 
     NavHost(
         navController = navController,
-        startDestination = Screen.LoginScreen.route,
+        startDestination = startDestination,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
         popExitTransition = { ExitTransition.None }
-
     ) {
 
         composable(Screen.LoginScreen.route) {
-            LoginUI( onSuccess = {
-                user ->
-                    val userJson = Json.encodeToString(user)
-                    val encodeUserJson = URLEncoder.encode(userJson, "UTF-8")
-                    navController.navigate("${Screen.BandejaScreen.route}/$encodeUserJson")
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Screen.BandejaScreen.route) {
+                        popUpTo(Screen.LoginScreen.route) { inclusive = true }
+                    }
                 }
             )
         }
 
-        composable(
-            route = "${Screen.BandejaScreen.route}/{user}",
-            arguments = listOf(
-                navArgument("user") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            val userJson = it.arguments?.getString("user") ?: ""
-            val userDecoded = URLDecoder.decode(userJson, "UTF-8")
-            val user = Json.decodeFromString<User>(userDecoded)
-
-            BandejaUI(user = user)
+        composable(Screen.BandejaScreen.route) {
+            BandejaScreen()
         }
 
     }
