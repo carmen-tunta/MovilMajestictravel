@@ -65,4 +65,10 @@ class BandejaViewModel @Inject constructor(
             }
         }
     }
+
+    fun logout() {
+        viewModelScope.launch {
+            loginDataSource.logout()
+        }
+    }
 }

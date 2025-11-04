@@ -269,17 +269,10 @@ fun BandejaUI(user: User) {
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(vertical = 15.dp, horizontal = 20.dp),
+                    .padding(vertical = 5.dp, horizontal = 20.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "PeruAndesTravel Logo",
-                    modifier = Modifier
-                        .padding(bottom = 20.dp)
-                        .width(160.dp)
-                )
                 Text(
                     text = user.username,
                     modifier = Modifier.padding(bottom = 7.dp),

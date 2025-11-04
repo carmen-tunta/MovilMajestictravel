@@ -15,6 +15,7 @@ val Context.dataStore by preferencesDataStore(name = "login_prefs")
 class LoginDataSource(private val context: Context) {
 
     private val USER = stringPreferencesKey("user")
+    private var initialized = false
 
     val gson = Gson()
 
@@ -25,14 +26,19 @@ class LoginDataSource(private val context: Context) {
         }
     }
 
+    suspend fun logout() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(USER)
+        }
+    }
+
     val userFlow: Flow<User?> = context.dataStore.data
         .map { preferences ->
+            initialized = true
             preferences[USER]?.let { gson.fromJson(it, User::class.java) }
         }
 
-    suspend fun clearToken() {
-        context.dataStore.edit { it.clear() }
-    }
+    fun isInitialized(): Boolean = initialized
 }
 
 
