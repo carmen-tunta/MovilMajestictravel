@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.ucb.data.NetworkResult
 import com.ucb.domain.User
 import com.ucb.framework.datastore.LoginDataSource
-import com.ucb.usecases.ObtainToken
 import com.ucb.usecases.user.Login
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,7 +1,6 @@
 package com.ucb.framework.service
 
 import com.ucb.domain.Bandeja
-import com.ucb.framework.dto.MovieResponseDto
 import com.ucb.framework.dto.bandeja.BandejaResponseDto
 import com.ucb.framework.dto.user.UserResponseDto
 import retrofit2.Response
