@@ -8,13 +8,13 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 }
 android {
-    namespace = "com.ucb.ucbtest"
+    namespace = "com.mtg.peruandestop"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.ucb.ucbtest"
+        applicationId = "com.mtg.peruandestop"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

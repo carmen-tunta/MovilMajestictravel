@@ -6,8 +6,8 @@ plugins {
 }
 
 android {
-    namespace = "com.ucb.framework"
-    compileSdk = 34
+    namespace = "com.mtg.framework"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
