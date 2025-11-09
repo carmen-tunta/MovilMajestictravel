@@ -44,8 +44,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.zIndex
@@ -255,6 +261,11 @@ fun BandejaUI(user: User) {
     val viewModel: BandejaViewModel = hiltViewModel()
 
     val bandejaState by viewModel.bandejaState.collectAsState(BandejaViewModel.BandejaState.Init)
+
+    val showDialog = remember { mutableStateOf(false) }
+    val selectedAction = remember { mutableStateOf("") }
+    val selectedId = remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(user.id) {
         viewModel.DoGetByAgent(user.id.toString(), user.accessToken)
     }
@@ -339,6 +350,7 @@ fun BandejaUI(user: User) {
                                     ),
                             ) {
                                 val borderColor = colorResource(id = R.color.border_table_color)
+
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -349,28 +361,127 @@ fun BandejaUI(user: User) {
                                                 color = borderColor,
                                                 start = Offset(0f, y),
                                                 end = Offset(size.width, y),
-                                                strokeWidth = strokeWidth)
+                                                strokeWidth = strokeWidth
+                                            )
                                         }
-                                        .padding(
-                                            vertical = 8.dp,
-                                            horizontal = 11.dp,
-                                        ),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                        .padding(vertical = 8.dp, horizontal = 11.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(
-                                        text = it.passengerName,
-                                        style = TextStyle(
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                    )
-                                    Text(
-                                        text = "${getCountryNameByCode(it.countryCode)} " + it.countryCode + " " + it.whatsapp,
-                                        color = colorResource(id = R.color.text_color_secondary),
-                                        style = TextStyle(
-                                            fontSize = 10.sp
+                                    Column {
+                                        Text(
+                                            text = it.passengerName,
+                                            style = TextStyle(fontWeight = FontWeight.Bold)
                                         )
+                                        Text(
+                                            text = "${getCountryNameByCode(it.countryCode)} " + it.countryCode + " " + it.whatsapp,
+                                            color = colorResource(id = R.color.text_color_secondary),
+                                            style = TextStyle(fontSize = 10.sp)
                                         )
+                                    }
+
+                                    if(it.status == "recibido" || it.status == "en_progreso") {
+                                        val expanded = remember { mutableStateOf(false) }
+
+                                        Box {
+                                            IconButton(onClick = { expanded.value = true }) {
+                                                Icon(
+                                                    imageVector = Icons.Default.MoreVert,
+                                                    contentDescription = "Opciones"
+                                                )
+                                            }
+
+                                            DropdownMenu(
+                                                expanded = expanded.value,
+                                                onDismissRequest = { expanded.value = false }
+                                            ) {
+                                                if(it.status == "recibido") {
+                                                    DropdownMenuItem(
+                                                        text = { Text("Atender") },
+                                                        onClick = {
+                                                            viewModel.DoAtenderRequest(
+                                                                it.id.toString(),
+                                                                user.id.toString(),
+                                                                user.accessToken
+                                                            )
+                                                        }
+                                                    )
+                                                }
+                                                DropdownMenuItem(
+                                                    text = { Text("Liberar") },
+                                                    onClick = {
+                                                        viewModel.DoReleaseRequest(it.id.toString(), user.id.toString(), user.accessToken)
+                                                    }
+                                                )
+                                                DropdownMenuItem(
+                                                    text = { Text("Cotizando") },
+                                                    onClick = {
+                                                        expanded.value = false
+                                                        selectedAction.value = "cotizando"
+                                                        selectedId.value = it.id.toString()
+                                                        showDialog.value = true
+                                                    }
+                                                )
+                                                DropdownMenuItem(
+                                                    text = { Text("Sin respuesta") },
+                                                    onClick = {
+                                                        expanded.value = false
+                                                        selectedAction.value = "sin_respuesta"
+                                                        selectedId.value = it.id.toString()
+                                                        showDialog.value = true
+                                                    }
+                                                )
+                                            }
+
+                                        }
+                                    }
                                 }
+
+                                if (showDialog.value) {
+                                    AlertDialog(
+                                        onDismissRequest = { showDialog.value = false },
+                                        title = { Text("Confirmar acción") },
+                                        text = {
+                                            Text(
+                                                text = when (selectedAction.value) {
+                                                    "cotizando" -> "Al marcar la solicitud como cotizando, ya no aparecerá en este apartado."
+                                                    "sin_respuesta" -> "Al marcar la solicitud como sin respuesta, ya no aparecerá en este apartado."
+                                                    else -> ""
+                                                }
+                                            )
+                                        },
+                                        confirmButton = {
+                                            TextButton(
+                                                onClick = {
+                                                    showDialog.value = false
+                                                    when (selectedAction.value) {
+                                                        "cotizando" -> {
+                                                            viewModel.DoCotizandoRequest(selectedId.value!!, user.id.toString(), user.accessToken)
+                                                            selectedId.value = null
+                                                        }
+                                                        "sin_respuesta" -> {
+                                                            viewModel.DoRequestSinRespuesta(selectedId.value!!, user.id.toString(), user.accessToken)
+                                                            selectedId.value = null
+                                                        }
+                                                    }
+                                                }
+                                            ) {
+                                                Text("Aceptar")
+                                            }
+                                        },
+                                        dismissButton = {
+                                            TextButton(
+                                                onClick = {
+                                                    showDialog.value = false
+                                                    selectedId.value = null
+                                                }
+                                            ) {
+                                                Text("Cancelar")
+                                            }
+                                        }
+                                    )
+                                }
+
 
                                 it.services.map {
                                     Text(

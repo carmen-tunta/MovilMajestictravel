@@ -18,7 +18,11 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import com.ucb.framework.push.FirebaseNotificationDataSource
 import com.ucb.framework.user.UserRemoteDataSource
+import com.ucb.usecases.bandeja.AtenderRequest
+import com.ucb.usecases.bandeja.CotizandoRequest
 import com.ucb.usecases.bandeja.GetBandejaByAgent
+import com.ucb.usecases.bandeja.ReleaseRequest
+import com.ucb.usecases.bandeja.RequestSinRespuesta
 import com.ucb.usecases.bandeja.TakeRequest
 import com.ucb.usecases.user.Login
 
@@ -74,6 +78,29 @@ object AppModule {
         return TakeRequest(bandejaRepo)
     }
 
+    @Provides
+    @Singleton
+    fun provideReleaseRequest(bandejaRepo: BandejaRepository): ReleaseRequest {
+        return ReleaseRequest(bandejaRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCotizandoRequest(bandejaRepo: BandejaRepository): CotizandoRequest {
+        return CotizandoRequest(bandejaRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRequestSinRespuesta(bandejaRepo: BandejaRepository): RequestSinRespuesta {
+        return RequestSinRespuesta(bandejaRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAtenderRequest(bandejaRepo: BandejaRepository): AtenderRequest {
+        return AtenderRequest(bandejaRepo)
+    }
 
     @Provides
     @Singleton

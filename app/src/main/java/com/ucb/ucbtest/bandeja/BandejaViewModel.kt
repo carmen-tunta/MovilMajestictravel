@@ -6,7 +6,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ucb.data.NetworkResult
 import com.ucb.domain.Bandeja
 import com.ucb.framework.datastore.LoginDataSource
+import com.ucb.usecases.bandeja.AtenderRequest
+import com.ucb.usecases.bandeja.CotizandoRequest
 import com.ucb.usecases.bandeja.GetBandejaByAgent
+import com.ucb.usecases.bandeja.ReleaseRequest
+import com.ucb.usecases.bandeja.RequestSinRespuesta
 import com.ucb.usecases.bandeja.TakeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +23,10 @@ import javax.inject.Inject
 class BandejaViewModel @Inject constructor(
     val getByAgent: GetBandejaByAgent,
     val takeRequest: TakeRequest,
+    val releaseRequest: ReleaseRequest,
+    val cotizandoRequest: CotizandoRequest,
+    val requestSinRespuesta: RequestSinRespuesta,
+    val atenderRequest: AtenderRequest,
     private val loginDataSource: LoginDataSource,
 ): ViewModel() {
 
@@ -61,6 +69,70 @@ class BandejaViewModel @Inject constructor(
                 }
                 is NetworkResult.Error -> {
                     _bandejaState.value = BandejaState.Error("Error al tomar la solicitud, recarga la página")
+                }
+            }
+        }
+    }
+
+    fun DoReleaseRequest(id: String, idAgent: String, token: String) {
+        _bandejaState.value = BandejaState.Loading
+        viewModelScope.launch {
+            val result: NetworkResult<Bandeja> = releaseRequest.invoke(id, idAgent, "Bearer $token")
+
+            when(result) {
+                is NetworkResult.Success -> {
+                    DoGetByAgent(idAgent, token)
+                }
+                is NetworkResult.Error -> {
+                    _bandejaState.value = BandejaState.Error("Error al liberar la solicitud, recarga la página")
+                }
+            }
+        }
+    }
+
+    fun DoCotizandoRequest(id: String, idAgent: String, token: String) {
+        _bandejaState.value = BandejaState.Loading
+        viewModelScope.launch {
+            val result: NetworkResult<Bandeja> = cotizandoRequest.invoke(id, idAgent, "Bearer $token")
+
+            when(result) {
+                is NetworkResult.Success -> {
+                    DoGetByAgent(idAgent, token)
+                }
+                is NetworkResult.Error -> {
+                    _bandejaState.value = BandejaState.Error("Error al poner como cotizando la solicitud, recarga la página")
+                }
+            }
+        }
+    }
+
+    fun DoRequestSinRespuesta(id: String, idAgent: String, token: String) {
+        _bandejaState.value = BandejaState.Loading
+        viewModelScope.launch {
+            val result: NetworkResult<Bandeja> = requestSinRespuesta.invoke(id, idAgent, "Bearer $token")
+
+            when(result) {
+                is NetworkResult.Success -> {
+                    DoGetByAgent(idAgent, token)
+                }
+                is NetworkResult.Error -> {
+                    _bandejaState.value = BandejaState.Error("Error al poner la solicitud como sin respuesta, recarga la página")
+                }
+            }
+        }
+    }
+
+    fun DoAtenderRequest(id: String, idAgent: String, token: String) {
+        _bandejaState.value = BandejaState.Loading
+        viewModelScope.launch {
+            val result: NetworkResult<Bandeja> = atenderRequest.invoke(id, "Bearer $token")
+
+            when(result) {
+                is NetworkResult.Success -> {
+                    DoGetByAgent(idAgent, token)
+                }
+                is NetworkResult.Error -> {
+                    _bandejaState.value = BandejaState.Error("Error al poner la solicitud como sin respuesta, recarga la página")
                 }
             }
         }

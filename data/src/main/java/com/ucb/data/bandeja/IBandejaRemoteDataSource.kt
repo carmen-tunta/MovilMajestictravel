@@ -14,4 +14,27 @@ interface IBandejaRemoteDataSource {
         agentId: String,
         token: String,
     ): NetworkResult<Bandeja>
+
+    suspend fun releaseRequest(
+        id: String,
+        agentId: String,
+        token: String,
+    ): NetworkResult<Bandeja>
+
+    suspend fun cotizandoRequest(
+        id: String,
+        agentId: String,
+        token: String,
+    ): NetworkResult<Bandeja>
+
+    suspend fun requestSinRespuesta(
+        id: String,
+        agentId: String,
+        token: String,
+    ): NetworkResult<Bandeja>
+
+    suspend fun atenderRequest(
+        id: String,
+        token: String,
+    ): NetworkResult<Bandeja>
 }
