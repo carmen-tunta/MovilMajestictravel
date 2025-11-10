@@ -48,7 +48,7 @@ fun LoginUI(onSuccess: (User) -> Unit) {
     val viewModel: LoginViewModel = hiltViewModel()
 
     val loginState by viewModel.loginState.collectAsState(LoginViewModel.LoginState.Init)
-    var userData by remember { mutableStateOf<String?>(null) } // 👈 aquí guardaremos lo que mostraremos
+    var userData by remember { mutableStateOf<String?>(null) }
 
     Scaffold { innerPadding ->
         Box(

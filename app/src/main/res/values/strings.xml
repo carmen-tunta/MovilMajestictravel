@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ucbtest</string>
+    <string name="app_name">PeruAndesTop</string>
     <string name="login_title">Bandeja de Solicitud</string>
     <string name="home_welcome_text">Bienvenido de nuevo %s!</string>
     <string name="gitalias_input">Ingrese la cuenta de github</string>
