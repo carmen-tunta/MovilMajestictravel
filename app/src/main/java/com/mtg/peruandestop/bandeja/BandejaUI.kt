@@ -44,6 +44,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.text.style.TextDecoration
 import java.util.Locale
@@ -395,7 +396,7 @@ fun BandejaUI(user: User) {
                                                                 user.id.toString(),
                                                                 user.accessToken
                                                             )
-                                                        }
+                                                        },
                                                     )
                                                 }
                                                 DropdownMenuItem(
@@ -457,7 +458,10 @@ fun BandejaUI(user: User) {
                                                     }
                                                 }
                                             ) {
-                                                Text("Aceptar")
+                                                Text(
+                                                    "Aceptar",
+                                                    color = colorResource(R.color.primary)
+                                                    )
                                             }
                                         },
                                         dismissButton = {
@@ -467,7 +471,9 @@ fun BandejaUI(user: User) {
                                                     selectedId.value = null
                                                 }
                                             ) {
-                                                Text("Cancelar")
+                                                Text("Cancelar",
+                                                    color = colorResource(R.color.primary)
+                                                )
                                             }
                                         }
                                     )

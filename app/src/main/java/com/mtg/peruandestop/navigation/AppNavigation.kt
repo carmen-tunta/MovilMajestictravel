@@ -14,6 +14,7 @@ import com.mtg.framework.datastore.LoginDataSource
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import com.mtg.peruandestop.bandeja.BandejaScreen
 import com.mtg.peruandestop.login.LoginScreen
 
@@ -21,17 +22,6 @@ import com.mtg.peruandestop.login.LoginScreen
 fun AppNavigation(loginDataSource: LoginDataSource) {
     val navController = rememberNavController()
     val currentUser by loginDataSource.userFlow.collectAsState(initial = null)
-
-    if (currentUser == null && !loginDataSource.isInitialized()) {
-        // Mostrar una pantalla de carga, logo, splash, etc.
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
-        return
-    }
 
     val startDestination = if (currentUser != null) {
         Screen.BandejaScreen.route
