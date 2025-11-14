@@ -24,6 +24,7 @@ import com.mtg.usecases.bandeja.GetBandejaByAgent
 import com.mtg.usecases.bandeja.ReleaseRequest
 import com.mtg.usecases.bandeja.RequestSinRespuesta
 import com.mtg.usecases.bandeja.TakeRequest
+import com.mtg.usecases.push.SendTestNotification
 import com.mtg.usecases.user.Login
 
 @Module
@@ -116,7 +117,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideIPushDataSource(): IPushDataSource {
-        return FirebaseNotificationDataSource()
+    fun provideIPushDataSource(@ApplicationContext context: Context): IPushDataSource {
+        return FirebaseNotificationDataSource(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSendTestNotification(pushRepo: PushNotificationRepository): SendTestNotification {
+        return SendTestNotification(pushRepo)
     }
 }

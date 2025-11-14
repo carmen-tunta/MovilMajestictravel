@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.firebase.messaging)
+    implementation(libs.accompanist.permissions)
 
     implementation("com.google.code.gson:gson:2.10.1")
 
