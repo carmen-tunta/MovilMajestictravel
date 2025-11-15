@@ -33,6 +33,10 @@ data class RegisterFCMTokenResponse(
     val message: String
 )
 
+data class UnregisterFCMTokenRequest(
+    val token: String
+)
+
 interface IMTGApiService {
     @POST("auth/login")
     suspend fun login(
@@ -83,6 +87,12 @@ interface IMTGApiService {
     @POST("notifications/register-token")
     suspend fun registerFCMToken(
         @Body request: RegisterFCMTokenRequest,
+        @Header("Authorization") token: String,
+    ): Response<RegisterFCMTokenResponse>
+
+    @retrofit2.http.HTTP(method = "DELETE", path = "notifications/unregister-token", hasBody = true)
+    suspend fun unregisterFCMToken(
+        @Body request: UnregisterFCMTokenRequest,
         @Header("Authorization") token: String,
     ): Response<RegisterFCMTokenResponse>
 }

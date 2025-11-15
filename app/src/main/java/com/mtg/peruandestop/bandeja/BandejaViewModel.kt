@@ -11,7 +11,10 @@ import com.mtg.usecases.bandeja.GetBandejaByAgent
 import com.mtg.usecases.bandeja.ReleaseRequest
 import com.mtg.usecases.bandeja.RequestSinRespuesta
 import com.mtg.usecases.bandeja.TakeRequest
+import com.mtg.usecases.push.UnregisterFCMToken
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,6 +29,7 @@ class BandejaViewModel @Inject constructor(
     val cotizandoRequest: CotizandoRequest,
     val requestSinRespuesta: RequestSinRespuesta,
     val atenderRequest: AtenderRequest,
+    private val unregisterFCMToken: UnregisterFCMToken,
     private val loginDataSource: LoginDataSource,
 ): ViewModel() {
 
@@ -137,7 +141,12 @@ class BandejaViewModel @Inject constructor(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun logout() {
+        GlobalScope.launch {
+            val success = unregisterFCMToken.invoke()
+            android.util.Log.d("BandejaViewModel", "Token FCM eliminado: $success")
+        }
         viewModelScope.launch {
             loginDataSource.logout()
         }

@@ -26,6 +26,7 @@ import com.mtg.usecases.bandeja.RequestSinRespuesta
 import com.mtg.usecases.bandeja.TakeRequest
 import com.mtg.usecases.push.RegisterFCMToken
 import com.mtg.usecases.push.SendTestNotification
+import com.mtg.usecases.push.UnregisterFCMToken
 import com.mtg.usecases.user.Login
 
 @Module
@@ -136,5 +137,11 @@ object AppModule {
     @Singleton
     fun provideRegisterFCMToken(pushRepo: PushNotificationRepository): RegisterFCMToken {
         return RegisterFCMToken(pushRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUnregisterFCMToken(pushRepo: PushNotificationRepository): UnregisterFCMToken {
+        return UnregisterFCMToken(pushRepo)
     }
 }

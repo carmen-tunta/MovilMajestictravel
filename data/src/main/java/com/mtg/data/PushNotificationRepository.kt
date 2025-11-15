@@ -18,4 +18,8 @@ class PushNotificationRepository(
     suspend fun sendTokenToServer(userId: String, token: String): Boolean {
         return push.sendTokenToServer(userId, token)
     }
+
+    suspend fun removeTokenFromServer(token: String): Boolean {
+        return push.removeTokenFromServer(token)
+    }
 }

@@ -105,6 +105,41 @@ class FirebaseNotificationDataSource(
         }
     }
 
+    override suspend fun removeTokenFromServer(token: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                Log.d("FIREBASE", "Eliminando token del servidor: $token")
+                
+                // Obtener el usuario actual y su token
+                val user = loginDataSource.userFlow.first()
+                if (user == null) {
+                    Log.e("FIREBASE", "Usuario no autenticado")
+                    return@withContext false
+                }
+                
+                val request = com.mtg.framework.service.UnregisterFCMTokenRequest(
+                    token = token
+                )
+                
+                val response = retrofitBuilder.mtgApiService.unregisterFCMToken(
+                    request = request,
+                    token = "Bearer ${user.accessToken}"
+                )
+                
+                if (response.isSuccessful) {
+                    Log.d("FIREBASE", "Token eliminado exitosamente: ${response.body()?.message}")
+                    true
+                } else {
+                    Log.e("FIREBASE", "Error al eliminar token: ${response.code()}")
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("FIREBASE", "Error removing token from server", e)
+                false
+            }
+        }
+    }
+
     override suspend fun sendLocalNotification(notification: Notification): Boolean {
         return try {
             // Verificar permiso para Android 13+

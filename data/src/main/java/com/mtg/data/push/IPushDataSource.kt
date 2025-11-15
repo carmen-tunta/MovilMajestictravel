@@ -6,4 +6,5 @@ interface IPushDataSource {
     suspend fun getFCMToken(): String
     suspend fun sendLocalNotification(notification: Notification): Boolean
     suspend fun sendTokenToServer(userId: String, token: String): Boolean
+    suspend fun removeTokenFromServer(token: String): Boolean
 }
