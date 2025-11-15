@@ -15,8 +15,7 @@ import com.mtg.peruandestop.R
 @Composable
 fun BandejaScreen(
     viewModel: BandejaViewModel = hiltViewModel(),
-    onLogout: () -> Unit,
-    onNavigateToNotifications: () -> Unit = {}
+    onLogout: () -> Unit
 ) {
     val user = viewModel.currentUser.collectAsState(initial = null).value
 
@@ -34,11 +33,6 @@ fun BandejaScreen(
                         )
                     },
                     actions = {
-                        TextButton(
-                            onClick = onNavigateToNotifications
-                        ) {
-                            Text("🔔 Prueba", color = colorResource(R.color.text_color))
-                        }
                         TextButton(
                             onClick = {
                                 viewModel.logout()

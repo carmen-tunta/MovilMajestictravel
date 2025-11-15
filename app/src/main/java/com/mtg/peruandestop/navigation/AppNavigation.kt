@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import com.mtg.peruandestop.bandeja.BandejaScreen
 import com.mtg.peruandestop.login.LoginScreen
-import com.mtg.peruandestop.notification.NotificationScreen
 
 @Composable
 fun AppNavigation(loginDataSource: LoginDataSource) {
@@ -56,16 +55,8 @@ fun AppNavigation(loginDataSource: LoginDataSource) {
                         popUpTo(Screen.BandejaScreen.route) { inclusive = true }
                     }
                 },
-                onNavigateToNotifications = {
-                    navController.navigate(Screen.NotificationScreen.route)
-                }
             )
         }
-
-        composable(Screen.NotificationScreen.route) {
-            NotificationScreen()
-        }
-
     }
 
 
