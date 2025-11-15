@@ -31,6 +31,6 @@ class RetrofitBuilder(
     val mtgApiService: IMTGApiService = getRetrofit(BASE_URL_MTG).create(IMTGApiService::class.java)
 
     companion object {
-        private const val BASE_URL_MTG = "http://192.168.1.71:3080/"
+        private const val BASE_URL_MTG = "https://apis.majestictravelgroup.com/"
     }
 }
