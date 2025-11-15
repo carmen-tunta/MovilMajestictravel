@@ -13,12 +13,20 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mtg.data.push.IPushDataSource
 import com.mtg.domain.Notification
+import com.mtg.framework.datastore.LoginDataSource
+import com.mtg.framework.service.RegisterFCMTokenRequest
+import com.mtg.framework.service.RetrofitBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class FirebaseNotificationDataSource(
-    private val context: Context
+    private val context: Context,
+    private val retrofitBuilder: RetrofitBuilder,
+    private val loginDataSource: LoginDataSource
 ): IPushDataSource {
     
     companion object {
@@ -44,7 +52,7 @@ class FirebaseNotificationDataSource(
         }
     }
 
-    override suspend fun getNoti(): String = suspendCoroutine { continuation ->
+    override suspend fun getFCMToken(): String = suspendCoroutine { continuation ->
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -59,6 +67,42 @@ class FirebaseNotificationDataSource(
                 // Reanudar la ejecución con el token
                 continuation.resume(token ?: "")
             }
+    }
+
+    override suspend fun sendTokenToServer(userId: String, token: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                Log.d("FIREBASE", "Enviando token al servidor - UserId: $userId, Token: $token")
+                
+                val request = RegisterFCMTokenRequest(
+                    token = token,
+                    platform = "android"
+                )
+                
+                // Obtener el usuario actual y su token
+                val user = loginDataSource.userFlow.first()
+                if (user == null) {
+                    Log.e("FIREBASE", "Usuario no autenticado")
+                    return@withContext false
+                }
+                
+                val response = retrofitBuilder.mtgApiService.registerFCMToken(
+                    request = request,
+                    token = "Bearer ${user.accessToken}"
+                )
+                
+                if (response.isSuccessful) {
+                    Log.d("FIREBASE", "Token registrado exitosamente: ${response.body()?.message}")
+                    true
+                } else {
+                    Log.e("FIREBASE", "Error al registrar token: ${response.code()}")
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("FIREBASE", "Error sending token to server", e)
+                false
+            }
+        }
     }
 
     override suspend fun sendLocalNotification(notification: Notification): Boolean {

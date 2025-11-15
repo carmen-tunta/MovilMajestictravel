@@ -24,6 +24,7 @@ import com.mtg.usecases.bandeja.GetBandejaByAgent
 import com.mtg.usecases.bandeja.ReleaseRequest
 import com.mtg.usecases.bandeja.RequestSinRespuesta
 import com.mtg.usecases.bandeja.TakeRequest
+import com.mtg.usecases.push.RegisterFCMToken
 import com.mtg.usecases.push.SendTestNotification
 import com.mtg.usecases.user.Login
 
@@ -117,13 +118,23 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideIPushDataSource(@ApplicationContext context: Context): IPushDataSource {
-        return FirebaseNotificationDataSource(context)
+    fun provideIPushDataSource(
+        @ApplicationContext context: Context,
+        retrofit: RetrofitBuilder,
+        loginDataSource: LoginDataSource
+    ): IPushDataSource {
+        return FirebaseNotificationDataSource(context, retrofit, loginDataSource)
     }
 
     @Provides
     @Singleton
     fun provideSendTestNotification(pushRepo: PushNotificationRepository): SendTestNotification {
         return SendTestNotification(pushRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRegisterFCMToken(pushRepo: PushNotificationRepository): RegisterFCMToken {
+        return RegisterFCMToken(pushRepo)
     }
 }

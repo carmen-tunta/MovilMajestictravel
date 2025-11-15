@@ -24,6 +24,15 @@ data class AtenderRequestBody(
     val status: String = "en_progreso"
 )
 
+data class RegisterFCMTokenRequest(
+    val token: String,
+    val platform: String = "android"
+)
+
+data class RegisterFCMTokenResponse(
+    val message: String
+)
+
 interface IMTGApiService {
     @POST("auth/login")
     suspend fun login(
@@ -70,4 +79,10 @@ interface IMTGApiService {
         @Body body: AtenderRequestBody,
         @Header("Authorization") token: String,
     ): Response<BandejaResponseDto>
+
+    @POST("notifications/register-token")
+    suspend fun registerFCMToken(
+        @Body request: RegisterFCMTokenRequest,
+        @Header("Authorization") token: String,
+    ): Response<RegisterFCMTokenResponse>
 }

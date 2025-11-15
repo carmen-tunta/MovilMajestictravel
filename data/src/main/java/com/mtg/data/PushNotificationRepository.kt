@@ -7,11 +7,15 @@ class PushNotificationRepository(
     val push: IPushDataSource
 ) {
 
-    suspend fun getNoti(): String {
-        return push.getNoti()
+    suspend fun getFCMToken(): String {
+        return push.getFCMToken()
     }
 
     suspend fun sendLocalNotification(notification: Notification): Boolean {
         return push.sendLocalNotification(notification)
+    }
+
+    suspend fun sendTokenToServer(userId: String, token: String): Boolean {
+        return push.sendTokenToServer(userId, token)
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.mtg.data.NetworkResult
 import com.mtg.domain.User
 import com.mtg.framework.datastore.LoginDataSource
+import com.mtg.usecases.push.RegisterFCMToken
 import com.mtg.usecases.user.Login
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     val userLogin: Login,
     val loginDataSource: LoginDataSource,
+    val registerFCMToken: RegisterFCMToken,
 ): ViewModel() {
 
     sealed class LoginState {
@@ -41,6 +43,10 @@ class LoginViewModel @Inject constructor(
             when (result) {
                 is NetworkResult.Success -> {
                     loginDataSource.saveUser(result.data)
+                    
+                    // Registrar token FCM después del login exitoso
+                    registerFCMToken.invoke(result.data.id.toString())
+                    
                     _loginState.value = LoginState.Successful(result.data)
                 }
                 is NetworkResult.Error -> {
