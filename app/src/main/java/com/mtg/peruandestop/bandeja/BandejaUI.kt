@@ -225,7 +225,7 @@ fun String.timeRemaining(): String {
         if (remainingMillis <= 0) {
             "Expirado"
         } else {
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(remainingMillis) - 239
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(remainingMillis) + 1
             String.format("$minutes min.")
         }
     } catch (e: Exception) {
